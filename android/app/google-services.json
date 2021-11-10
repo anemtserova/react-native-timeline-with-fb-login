@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "336429652010",
+    "project_id": "rn-timeline",
+    "storage_bucket": "rn-timeline.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336429652010:android:14f18d022dbbdecec84b53",
+        "android_client_info": {
+          "package_name": "com.timeline_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336429652010-a9i4ll9399fugru86sn1vv16qv7vup9m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_UMfIyQw1Ytq4oQQNef1QoY0h-97KP_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336429652010-a9i4ll9399fugru86sn1vv16qv7vup9m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
