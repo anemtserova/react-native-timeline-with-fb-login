@@ -16,8 +16,9 @@ import FontAwesome, {
   BrandIcons,
   parseIconFromClassName,
 } from 'react-native-fontawesome';
+import FbButton from '../components/FbButton';
 
-const UserTimeLine = () => {
+const UserTimeline = () => {
   const faChevronCircleDown = parseIconFromClassName(
     'fas fa-chevron-circle-down',
   );
@@ -44,7 +45,7 @@ const UserTimeLine = () => {
     // </View>
     <View style={styles.container}>
       <Header title="Your Timeline" />
-      <Button onPress={getAllPosts} title="Press me" color="#f194ff" />
+      <FbButton onPress={getAllPosts} title="Press me" color="#f194ff" />
       {posts.map(({id, name, text, location}, index) => {
         return (
           <TouchableOpacity
@@ -126,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserTimeLine;
+export default UserTimeline;
