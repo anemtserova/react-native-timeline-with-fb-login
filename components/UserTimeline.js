@@ -1,14 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
   FlatList,
   TouchableOpacity,
   Button,
 } from 'react-native';
-
-import Header from '../components/Header';
 
 import FontAwesome, {
   SolidIcons,
@@ -16,26 +15,86 @@ import FontAwesome, {
   BrandIcons,
   parseIconFromClassName,
 } from 'react-native-fontawesome';
-import FbButton from '../components/FbButton';
+import Header from '../components/Header';
+import auth from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UserTimeline = () => {
+const UserTimeline = ({navigation}) => {
   const faChevronCircleDown = parseIconFromClassName(
     'fas fa-chevron-circle-down',
   );
   const [currentIndex, setCurrentIndex] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  const getAllPosts = () => {
+  const [userToken, setUserToken] = useState('');
+  const user = firebase.auth().currentUser;
+
+  useEffect(() => {
+    // const getAllPosts = () => {
     fetch('http://10.0.2.2:8000/api/posts')
       .then(response => response.json())
       .then(posts => {
-        console.log(JSON.stringify(posts));
+        //console.log(JSON.stringify(posts));
         setPosts(posts);
         return posts;
       })
       .catch(error => {
         console.error(error);
       });
+
+    setUserToken(AsyncStorage.getItem('token'));
+
+    // };
+  }, []);
+
+  console.log('userToken', userToken);
+
+  const Post = ({id, name, text, location}) => {
+    return (
+      <View>
+        <TouchableOpacity
+          key={id}
+          onPress={() => {
+            setCurrentIndex(id === currentIndex ? null : id);
+          }}
+          style={styles.postCard}
+          activeOpacity={0.85}>
+          <View style={styles.card}>
+            <View style={styles.title}>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.location}>{location}</Text>
+              <FontAwesome style={styles.icon} icon={faChevronCircleDown} />
+            </View>
+          </View>
+          {id === currentIndex && (
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>{text}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderItem = ({item, index}) => {
+    return (
+      <View>
+        <Post
+          id={item.id}
+          name={item.name}
+          text={item.text}
+          location={item.location}
+          index={index}
+          key={item.id}
+        />
+        {/* {index === currentIndex && (
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>{item.text}</Text>
+          </View>
+        )} */}
+      </View>
+    );
   };
 
   return (
@@ -44,9 +103,16 @@ const UserTimeline = () => {
     //   <FlatList data={post} renderItem={({item}) => <PostItem item={item} />} />
     // </View>
     <View style={styles.container}>
-      <Header title="Your Timeline" />
-      <FbButton onPress={getAllPosts} title="Press me" color="#f194ff" />
-      {posts.map(({id, name, text, location}, index) => {
+      <Header title={user.displayName} />
+      <View style={styles.listContainer}>
+        <FlatList data={posts} renderItem={renderItem} />
+      </View>
+      {/* <TouchableOpacity */}
+      {/* // onPress={getAllPosts}
+      // title="Press me"
+      // color="#f194ff" */}
+      {/* /> */}
+      {/* {posts.map(({id, name, text, location}, index) => {
         return (
           <TouchableOpacity
             key={id}
@@ -55,7 +121,7 @@ const UserTimeline = () => {
             }}
             style={styles.postCard}
             activeOpacity={0.85}>
-            <View style={[styles.card]}>
+            <View style={styles.card}>
               <View style={styles.title}>
                 <Text style={styles.name}>{name}</Text>
                 <Text style={styles.location}>{location}</Text>
@@ -63,13 +129,13 @@ const UserTimeline = () => {
               </View>
               {index === currentIndex && (
                 <View style={styles.textContainer}>
-                  <Text style={[styles.text]}>{text}</Text>
+                  <Text style={styles.text}>{text}</Text>
                 </View>
               )}
             </View>
           </TouchableOpacity>
         );
-      })}
+      })} */}
     </View>
   );
 };
@@ -77,7 +143,11 @@ const UserTimeline = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  listContainer: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   list: {
     color: 'black',

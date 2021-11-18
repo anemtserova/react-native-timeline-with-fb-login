@@ -17,22 +17,24 @@ import FontAwesome, {
 import Header from './components/Header';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from './components/HomeScreen';
+import Login from './components/Login';
 import UserTimeline from './components/UserTimeline';
+import Logout from './components/Logout';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/auth';
-
-import FbButton from './components/FbButton';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={HomeScreen} />
-        <Stack.Screen name="UserTimeline" component={UserTimeline} />
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Login} />
+        <Stack.Screen name="Timeline" component={UserTimeline} />
+        <Stack.Screen name="Logout" component={Logout} />
       </Stack.Navigator>
     </NavigationContainer>
   );
