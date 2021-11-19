@@ -27,7 +27,7 @@ const UserTimeline = ({navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  const [userToken, setUserToken] = useState('');
+  const [userToken, setUserToken] = useState(null);
   const user = firebase.auth().currentUser;
 
   useEffect(() => {
@@ -104,25 +104,25 @@ const UserTimeline = ({navigation}) => {
       .signOut()
       .then(() => console.log('User signed out!'));
   };
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <Button
-  //         onPress={() => {
-  //           auth()
-  //             .signOut()
-  //             .then(() => console.log('User signed out!'));
-  //           navigation.navigate('Home');
-  //         }}
-  //         title="Logout"
-  //       />
-  //     ),
-  //   });
-  // }, [navigation]);
+
+  const clearData = async () => {
+    try {
+      await AsyncStorage.clear();
+      setUserToken(null);
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <View style={styles.container}>
       {user.displayName ? <Header title={user.displayName} /> : null}
+      <View>
+        <TouchableOpacity onPress={clearData}>
+          <Text>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.listContainer}>
         <FlatList data={posts} renderItem={renderItem} />
       </View>

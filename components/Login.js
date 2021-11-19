@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   FlatList,
+  Image,
   TouchableOpacity,
   Button,
 } from 'react-native';
@@ -21,6 +22,7 @@ import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserTimeline from './UserTimeline';
+import {faRubleSign} from '@fortawesome/free-solid-svg-icons';
 
 const Login = ({navigation}) => {
   const [curUserToken, setCurUserToken] = useState(null);
@@ -51,13 +53,7 @@ const Login = ({navigation}) => {
 
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
-
-    // const user = firebase.auth().currentUser;
-    // console.log(user);
-    // setCurUserName(user.displayName);
   }
-
-  //console.log(curUserName, curUserToken);
 
   const setData = async () => {
     try {
@@ -70,11 +66,12 @@ const Login = ({navigation}) => {
       console.log(e);
     }
   };
+
   const getData = async () => {
     try {
       await AsyncStorage.getItem('token').then(usertoken => {
         if (usertoken != null) {
-          // setCurUserToken(usertoken);
+          setCurUserToken(usertoken);
           navigation.navigate('Timeline');
         }
       });
@@ -90,22 +87,32 @@ const Login = ({navigation}) => {
   console.log('login usertoken', curUserToken);
 
   return (
-    <View>
-      <View style={styles.homeScreen}>
-        <Text style={styles.text}>You have to log in to continue</Text>
-        <TouchableOpacity style={styles.btn}>
-          <Button
-            color="pink"
-            title="Facebook Sign-In"
-            onPress={() => {
-              onFacebookButtonPress().then(() =>
-                console.log('Signed in with Facebook!'),
-              );
-
-              setData();
-            }}></Button>
-        </TouchableOpacity>
+    <View style={styles.homeScreen}>
+      <View style={styles.imgContainer}>
+        <Image style={styles.img} source={require('../img/balloons.png')} />
       </View>
+      <View style={styles.textBox}>
+        <Text style={styles.text}>You have to log in to continue</Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => {
+          onFacebookButtonPress().then(() =>
+            console.log('Signed in with Facebook!'),
+          );
+          setData();
+        }}
+        style={styles.btnBox}>
+        <Text style={styles.textBtn}>Facebook Sign-In</Text>
+        {/* <Button
+          color="pink"
+          title="Facebook Sign-In"
+          onPress={() => {
+            onFacebookButtonPress().then(() =>
+              console.log('Signed in with Facebook!'),
+            );
+            setData();
+          }}></Button> */}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -113,68 +120,46 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   homeScreen: {
     flex: 1,
+    flexDirection: 'column',
 
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgb(235, 251, 255)',
   },
-  btn: {
-    height: 100,
-    width: 220,
-    margin: 30,
-    fontSize: 30,
+  btnBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 205,
+    height: 70,
+    marginTop: 20,
+    backgroundColor: 'rgb(0, 147, 184)',
+    borderRadius: 8,
+  },
+  textBox: {
+    marginBottom: 15,
   },
   text: {
-    marginBottom: 15,
+    fontSize: 20,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    color: 'rgb(0, 147, 184)',
+  },
+  textBtn: {
+    fontSize: 20,
+    textTransform: 'uppercase',
+    color: 'white',
+    fontWeight: '700',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
   },
-  list: {
-    color: 'black',
-    fontSize: 30,
+  img: {
+    width: 300,
+    height: 300,
   },
-  postCard: {
-    flexGrow: 1,
-  },
-  card: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  name: {
-    fontSize: 28,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: -2,
-  },
-  location: {
-    fontSize: 18,
-    //fontWeight: '600',
-    textTransform: 'lowercase',
-    letterSpacing: -2,
-    alignSelf: 'center',
-    marginLeft: 12,
-  },
-  textContainer: {
-    borderBottomColor: '#f194ff',
-    borderBottomWidth: 2,
-  },
-  text: {
-    fontSize: 24,
-    lineHeight: 20 * 1.5,
-    textAlign: 'center',
-    // color: 'white',
-  },
-  icon: {
-    fontSize: 20,
-    color: '#f194ff',
-    padding: 2,
-    alignSelf: 'center',
-    marginLeft: 12,
-  },
-  title: {
-    flexDirection: 'row',
+  imgContainer: {
+    marginBottom: 55,
   },
 });
 
