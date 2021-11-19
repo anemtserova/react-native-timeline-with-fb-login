@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -31,7 +31,6 @@ const UserTimeline = ({navigation}) => {
   const user = firebase.auth().currentUser;
 
   useEffect(() => {
-    // const getAllPosts = () => {
     fetch('http://10.0.2.2:8000/api/posts')
       .then(response => response.json())
       .then(posts => {
@@ -43,10 +42,19 @@ const UserTimeline = ({navigation}) => {
         console.error(error);
       });
 
-    setUserToken(AsyncStorage.getItem('token'));
-
-    // };
+    getData();
   }, []);
+
+  const getData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token !== null) {
+        return setUserToken(token);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   console.log('userToken', userToken);
 
@@ -88,54 +96,36 @@ const UserTimeline = ({navigation}) => {
           index={index}
           key={item.id}
         />
-        {/* {index === currentIndex && (
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>{item.text}</Text>
-          </View>
-        )} */}
       </View>
     );
   };
+  const logOut = () => {
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+  };
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerLeft: () => (
+  //       <Button
+  //         onPress={() => {
+  //           auth()
+  //             .signOut()
+  //             .then(() => console.log('User signed out!'));
+  //           navigation.navigate('Home');
+  //         }}
+  //         title="Logout"
+  //       />
+  //     ),
+  //   });
+  // }, [navigation]);
 
   return (
-    // <View style={styles.container}>
-    //   <Header title="Your Timeline" />
-    //   <FlatList data={post} renderItem={({item}) => <PostItem item={item} />} />
-    // </View>
     <View style={styles.container}>
-      <Header title={user.displayName} />
+      {user.displayName ? <Header title={user.displayName} /> : null}
       <View style={styles.listContainer}>
         <FlatList data={posts} renderItem={renderItem} />
       </View>
-      {/* <TouchableOpacity */}
-      {/* // onPress={getAllPosts}
-      // title="Press me"
-      // color="#f194ff" */}
-      {/* /> */}
-      {/* {posts.map(({id, name, text, location}, index) => {
-        return (
-          <TouchableOpacity
-            key={id}
-            onPress={() => {
-              setCurrentIndex(index === currentIndex ? null : index);
-            }}
-            style={styles.postCard}
-            activeOpacity={0.85}>
-            <View style={styles.card}>
-              <View style={styles.title}>
-                <Text style={styles.name}>{name}</Text>
-                <Text style={styles.location}>{location}</Text>
-                <FontAwesome style={styles.icon} icon={faChevronCircleDown} />
-              </View>
-              {index === currentIndex && (
-                <View style={styles.textContainer}>
-                  <Text style={styles.text}>{text}</Text>
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      })} */}
     </View>
   );
 };

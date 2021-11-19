@@ -27,7 +27,7 @@ const Logout = ({navigation}) => {
 
   return (
     <View style={styles.homeScreen}>
-      <Text style={styles.text}>Click the button to sign out</Text>
+      {/* <Text style={styles.text}>Click the button to sign out</Text> */}
       <TouchableOpacity style={styles.btn}>
         <Button
           color="pink"
@@ -36,12 +36,6 @@ const Logout = ({navigation}) => {
             auth()
               .signOut()
               .then(() => console.log('User signed out!'));
-            // AsyncStorage.setItem('token', null).then(e =>
-            //   console.log('storeToken error occurred: ', e),
-            // );
-            // AsyncStorage.setItem('username', null).then(e => {
-            //   console.log('storeName error occurred: ', e);
-            // });
           }}></Button>
       </TouchableOpacity>
     </View>

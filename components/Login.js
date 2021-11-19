@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -20,9 +20,10 @@ import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserTimeline from './UserTimeline';
 
 const Login = ({navigation}) => {
-  const [curUserToken, setCurUserToken] = useState('');
+  const [curUserToken, setCurUserToken] = useState(null);
   const [curUserName, setCurUserName] = useState('');
 
   async function onFacebookButtonPress() {
@@ -33,6 +34,7 @@ const Login = ({navigation}) => {
     ]);
     //console.log('result', result);
     if (result.isCancelled) {
+      navigation.navigate('Home');
       throw 'User cancelled the login process';
     }
     // Once signed in, get the users AccesToken
@@ -46,69 +48,64 @@ const Login = ({navigation}) => {
       data.accessToken,
     );
     setCurUserToken(facebookCredential.token);
-    //console.log('faceboook token:', facebookCredential.token);
-    // try {
-    // const userData = JSON.stringify(data);
-    // AsyncStorage.setItem('token', userData);
-    //   );
-    // } catch (e) {
-    //   console.log('storeToken error occurred: ', e);
-    // }
+
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
 
     // const user = firebase.auth().currentUser;
     // console.log(user);
     // setCurUserName(user.displayName);
-
-    // try {
-    //   await AsyncStorage.setItem('username', JSON.stringify(user.displayName));
-    // } catch (e) {
-    //   console.log('storeName error occurred: ', e);
-    // }
   }
 
   //console.log(curUserName, curUserToken);
 
-  // const storeToken = async curUserToken => {
-  //   try {
-  //     const token = await AsyncStorage.setItem('token', curUserToken);
-  //     return token != null ? JSON.parse(token) : null;
-  //   } catch (e) {
-  //     console.log('storeToken error occurred: ', e);
-  //   }
-  // };
+  const setData = async () => {
+    try {
+      const token = await AsyncStorage.setItem('token', curUserToken);
+      navigation.navigate('Timeline');
+      if (token !== null) {
+        setUserToken(token);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const getData = async () => {
+    try {
+      await AsyncStorage.getItem('token').then(usertoken => {
+        if (usertoken != null) {
+          // setCurUserToken(usertoken);
+          navigation.navigate('Timeline');
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  // const storeName = async curUserName => {
-  //   try {
-  //     const username = await AsyncStorage.setItem('username', curUserName);
-  //     return username != null ? JSON.parse(username) : null;
-  //   } catch (e) {
-  //     console.log('storeName error occurred: ', e);
-  //   }
-  // };
-  AsyncStorage.setItem('token', curUserToken);
+  useEffect(() => {
+    getData();
+  }, []);
+
+  console.log('login usertoken', curUserToken);
 
   return (
-    <View style={styles.homeScreen}>
-      <Text style={styles.text}>You have to log in to continue</Text>
-      <TouchableOpacity style={styles.btn}>
-        <Button
-          color="pink"
-          title="Facebook Sign-In"
-          onPress={() => {
-            onFacebookButtonPress()
-              .then(() => console.log('Signed in with Facebook!'))
-              .then(() => navigation.navigate('Timeline'));
-            // storeToken();
-            // storeName();
-            // console.log(
-            //   'username and token:',
-            //   AsyncStorage.getItem('username'),
-            //   AsyncStorage.getItem('token'),
-            // );
-          }}></Button>
-      </TouchableOpacity>
+    <View>
+      <View style={styles.homeScreen}>
+        <Text style={styles.text}>You have to log in to continue</Text>
+        <TouchableOpacity style={styles.btn}>
+          <Button
+            color="pink"
+            title="Facebook Sign-In"
+            onPress={() => {
+              onFacebookButtonPress().then(() =>
+                console.log('Signed in with Facebook!'),
+              );
+
+              setData();
+            }}></Button>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -116,7 +113,7 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   homeScreen: {
     flex: 1,
-    // flexDirection: 'column',
+
     justifyContent: 'center',
     alignItems: 'center',
   },
