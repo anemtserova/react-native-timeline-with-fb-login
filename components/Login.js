@@ -92,7 +92,7 @@ const Login = ({navigation}) => {
         <Image style={styles.img} source={require('../img/balloons.png')} />
       </View>
       <View style={styles.textBox}>
-        <Text style={styles.text}>You have to log in to continue</Text>
+        <Text style={styles.text}>Sign in to continue</Text>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -103,15 +103,6 @@ const Login = ({navigation}) => {
         }}
         style={styles.btnBox}>
         <Text style={styles.textBtn}>Facebook Sign-In</Text>
-        {/* <Button
-          color="pink"
-          title="Facebook Sign-In"
-          onPress={() => {
-            onFacebookButtonPress().then(() =>
-              console.log('Signed in with Facebook!'),
-            );
-            setData();
-          }}></Button> */}
       </TouchableOpacity>
     </View>
   );
