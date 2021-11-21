@@ -28,6 +28,8 @@ const UserTimeline = ({navigation}) => {
   const [posts, setPosts] = useState([]);
 
   const [userToken, setUserToken] = useState(null);
+  const [name, setName] = useState('');
+
   const user = firebase.auth().currentUser;
 
   useEffect(() => {
@@ -43,6 +45,9 @@ const UserTimeline = ({navigation}) => {
       });
 
     getData();
+    // const user = firebase.auth().currentUser;
+    // setName(user.displayName);
+    console.log('CurrentUser:', user);
   }, []);
 
   const getData = async () => {
@@ -56,7 +61,7 @@ const UserTimeline = ({navigation}) => {
     }
   };
 
-  console.log('userToken', userToken);
+  //console.log('userToken', userToken);
 
   const Post = ({id, name, text, location}) => {
     return (
@@ -101,20 +106,23 @@ const UserTimeline = ({navigation}) => {
       </View>
     );
   };
-  const logOut = () => {
-    auth()
+  const logOut = async () => {
+    await auth()
       .signOut()
       .then(() => console.log('User signed out!'));
   };
 
   const clearData = async () => {
     try {
-      await AsyncStorage.clear();
-      setUserToken(null);
-      navigation.navigate('Home');
-      // auth()
+      await AsyncStorage.removeItem('token');
+      // setUserToken(null);
+      // navigation.navigate('Home');
+
+      // await firebase
+      //   .auth()
       //   .signOut()
-      //   .then(() => console.log('User signed out!'));
+      //   .then(() => console.log('User signed out!'))
+      //   .catch(e => console.log(e));
     } catch (e) {
       console.log(e);
     }
@@ -122,11 +130,17 @@ const UserTimeline = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {user.displayName ? <Header title={user.displayName} /> : null}
+      {user != '' ? <Header title={user.displayName} /> : null}
 
       <View style={styles.listContainer}>
         <FlatList data={posts} renderItem={renderItem} />
-        <TouchableOpacity onPress={clearData} style={styles.btn}>
+        <TouchableOpacity
+          onPress={() => {
+            clearData();
+            logOut();
+            navigation.navigate('Home');
+          }}
+          style={styles.btn}>
           <Text style={styles.textBtn}>Sign Out</Text>
         </TouchableOpacity>
       </View>

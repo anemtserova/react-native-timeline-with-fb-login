@@ -34,7 +34,7 @@ const Login = ({navigation}) => {
       'public_profile',
       'email',
     ]);
-    //console.log('result', result);
+
     if (result.isCancelled) {
       navigation.navigate('Home');
       throw 'User cancelled the login process';
@@ -42,6 +42,7 @@ const Login = ({navigation}) => {
     // Once signed in, get the users AccesToken
     const data = await AccessToken.getCurrentAccessToken();
     console.log('token from data', data.accessToken);
+
     if (!data) {
       throw 'Something went wrong obtaining access token';
     }
@@ -49,7 +50,11 @@ const Login = ({navigation}) => {
     const facebookCredential = auth.FacebookAuthProvider.credential(
       data.accessToken,
     );
+
     setCurUserToken(facebookCredential.token);
+
+    const user = firebase.auth().currentUser;
+    console.log('user', user);
 
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
@@ -58,10 +63,11 @@ const Login = ({navigation}) => {
   const setData = async () => {
     try {
       const token = await AsyncStorage.setItem('token', curUserToken);
-      navigation.navigate('Timeline');
-      if (token !== null) {
-        setUserToken(token);
-      }
+      // navigation.navigate('Timeline');
+      // if (token !== null) {
+      //   setUserToken(token);
+      // }
+      console.log('asyncstorage is set');
     } catch (e) {
       console.log(e);
     }
@@ -69,7 +75,7 @@ const Login = ({navigation}) => {
 
   const getData = async () => {
     try {
-      await AsyncStorage.getItem('token').then(usertoken => {
+      return await AsyncStorage.getItem('token').then(usertoken => {
         if (usertoken != null) {
           setCurUserToken(usertoken);
           navigation.navigate('Timeline');
@@ -100,6 +106,7 @@ const Login = ({navigation}) => {
             console.log('Signed in with Facebook!'),
           );
           setData();
+          navigation.navigate('Timeline');
         }}
         style={styles.btnBox}>
         <Text style={styles.textBtn}>Facebook Sign-In</Text>
